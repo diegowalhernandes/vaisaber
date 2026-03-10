@@ -1,47 +1,222 @@
-body{
-font-family:Arial;
-background:linear-gradient(135deg,#6a5cff,#2ec4b6);
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-margin:0;
+/* ===== GOOGLE FONTS ===== */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+
+/* ===== VARIÁVEIS ===== */
+:root {
+  --cor-fundo: #fff9f0;
+  --cor-primaria: #ff4d6d;
+  --cor-secundaria: #ff9f1c;
+  --cor-terciaria: #2ec4b6;
+  --cor-roxo: #7b2fff;
+  --cor-verde: #06d6a0;
+  --cor-texto: #1a1a2e;
+  --cor-texto-claro: #555577;
+  --sombra: 0 6px 0px rgba(0,0,0,0.15);
+  --raio: 20px;
 }
 
-.container{
-background:white;
-padding:30px;
-border-radius:15px;
-width:500px;
-max-width:90%;
-text-align:center;
+/* ===== RESET ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-h1{
-color:#6a5cff;
+/* ===== BASE ===== */
+body {
+  font-family: 'Nunito', sans-serif;
+  background-color: var(--cor-fundo);
+  background-image:
+    radial-gradient(circle at 15% 20%, #ffb3c640 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, #c8b6ff40 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, #b5ead740 0%, transparent 60%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 16px;
 }
 
-button{
-width:100%;
-padding:12px;
-margin:10px 0;
-border:none;
-border-radius:10px;
-background:#ffd166;
-font-size:16px;
-cursor:pointer;
+/* ===== CONTAINER ===== */
+.container {
+  background: #ffffff;
+  border-radius: var(--raio);
+  width: 100%;
+  max-width: 480px;
+  padding: 24px 20px 32px;
+  box-shadow: 0 8px 32px rgba(123, 47, 255, 0.12);
+  text-align: center;
+  margin: auto;
 }
 
-button:hover{
-transform:scale(1.05);
+/* ===== TELA INICIAL ===== */
+#startScreen h1 {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(2rem, 10vw, 2.8rem);
+  color: var(--cor-primaria);
+  line-height: 1.1;
+  margin-bottom: 8px;
+  text-shadow: 3px 3px 0px #ffb3c6;
+  letter-spacing: 1px;
 }
 
-.correct{
-background:#4CAF50;
-color:white;
+#startScreen h1::before {
+  content: "🎮 ";
 }
 
-.wrong{
-background:#f44336;
-color:white;
+/* ===== PONTOS E PROGRESSO ===== */
+#score {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.4rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--cor-roxo), var(--cor-primaria));
+  padding: 10px 20px;
+  border-radius: 50px;
+  display: inline-block;
+  margin-bottom: 12px;
+  box-shadow: var(--sombra);
+  letter-spacing: 0.5px;
+}
+
+#progress {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--cor-texto-claro);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ===== PERGUNTA ===== */
+#question {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(1.2rem, 5vw, 1.55rem);
+  color: var(--cor-texto);
+  background: linear-gradient(135deg, #fff9f0, #fff0fa);
+  border: 3px solid #ffd6e7;
+  border-radius: var(--raio);
+  padding: 20px 18px;
+  margin-bottom: 20px;
+  line-height: 1.4;
+  min-height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== RESPOSTAS ===== */
+#answers {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#answers button {
+  width: 100%;
+  padding: 16px 20px;
+  border: 3px solid transparent;
+  border-radius: var(--raio);
+  background: linear-gradient(135deg, #f0f4ff, #f8f0ff);
+  border-color: #c8b6ff;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(1rem, 4vw, 1.1rem);
+  font-weight: 800;
+  color: var(--cor-roxo);
+  cursor: pointer;
+  text-align: left;
+  box-shadow: 0 4px 0px #c8b6ff;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  line-height: 1.3;
+  min-height: 56px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#answers button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0px #c8b6ff;
+  background: linear-gradient(135deg, #e8edff, #f0e6ff);
+}
+
+#answers button:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0px #c8b6ff;
+}
+
+#answers button:disabled {
+  cursor: default;
+}
+
+/* ===== FEEDBACK CORRETO / ERRADO ===== */
+.correct {
+  background: linear-gradient(135deg, #d4fce8, #b8f5d6) !important;
+  border-color: var(--cor-verde) !important;
+  color: #065f46 !important;
+  box-shadow: 0 4px 0px #06d6a090 !important;
+}
+
+.wrong {
+  background: linear-gradient(135deg, #ffe4e4, #ffc8c8) !important;
+  border-color: var(--cor-primaria) !important;
+  color: #9b1c1c !important;
+  box-shadow: 0 4px 0px #ff4d6d90 !important;
+}
+
+/* ===== BOTÃO PRINCIPAL ===== */
+button {
+  width: 100%;
+  padding: 18px;
+  margin: 12px 0 0;
+  border: none;
+  border-radius: var(--raio);
+  background: linear-gradient(135deg, var(--cor-secundaria), var(--cor-primaria));
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(1.1rem, 5vw, 1.3rem);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 6px 0px #c0392b50;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  letter-spacing: 0.5px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 9px 0px #c0392b50;
+}
+
+button:active {
+  transform: translateY(3px);
+  box-shadow: 0 3px 0px #c0392b50;
+}
+
+/* ===== TELA FINAL ===== */
+#endScreen h1 {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(1.8rem, 8vw, 2.4rem);
+  color: var(--cor-roxo);
+  margin-bottom: 12px;
+  text-shadow: 2px 2px 0px #c8b6ff;
+}
+
+#finalScore {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--cor-secundaria);
+  margin-bottom: 8px;
+}
+
+/* ===== RESPONSIVO TABLET+ ===== */
+@media (min-width: 480px) {
+  body {
+    align-items: center;
+    padding: 24px;
+  }
+
+  .container {
+    padding: 36px 32px 40px;
+  }
+
+  #answers button {
+    min-height: 60px;
+  }
 }
