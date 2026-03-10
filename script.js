@@ -1,5 +1,5 @@
-const SUPABASE_URL = "https://xxxx.supabase.co"
-const SUPABASE_KEY = "sua-anon-key"
+const SUPABASE_URL = "https://bfkiipxuilltkjrrztmx.supabase.co"
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJma2lpcHh1aWxsdGtqcnJ6dG14Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxMjE2NzUsImV4cCI6MjA4ODY5NzY3NX0.auc6AGduIrb-05947GH8mUysRfIa9zlHiVdPNQso5kU"
 
 let perguntasJogo = []
 let perguntaAtual = 0
@@ -26,7 +26,7 @@ async function startGame() {
   document.getElementById("answers").innerHTML = ""
 
   try {
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/perguntas?select=*`, {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/quiz?select=*`, {
       headers: {
         "apikey": SUPABASE_KEY,
         "Authorization": `Bearer ${SUPABASE_KEY}`
@@ -36,6 +36,8 @@ async function startGame() {
     if (!response.ok) throw new Error("Erro ao buscar perguntas")
 
     const data = await response.json()
+    console.log("Dados recebidos:", data)
+    console.log("Total:", data.length)
 
     const facil   = data.filter(q => q.dificuldade === "facil")
     const medio   = data.filter(q => q.dificuldade === "medio")
