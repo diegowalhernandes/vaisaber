@@ -43,16 +43,12 @@ async function startGame() {
     const medio   = data.filter(q => q.dificuldade === "medio")
     const dificil = data.filter(q => q.dificuldade === "dificil")
 
-    // Monta 15 perguntas (5 fáceis, 5 médias, 5 difíceis) embaralhadas
-    perguntasJogo = [
-      ...shuffle(facil).slice(0, 5),
-      ...shuffle(medio).slice(0, 5),
-      ...shuffle(dificil).slice(0, 5)
-    ].map(q => ({
-      pergunta: q.pergunta,
-      resposta: q.resposta,
-      opcoes: [q.opcao_a, q.opcao_b, q.opcao_c, q.opcao_d]
-    }))
+
+  perguntasJogo = shuffle(data).slice(0, 15).map(q => ({
+    pergunta: q.pergunta,
+    resposta: q.resposta,
+    opcoes: [q.opcao_a, q.opcao_b, q.opcao_c, q.opcao_d]
+  }))
 
     perguntaAtual = 0
     pontos = 0
