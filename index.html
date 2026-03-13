@@ -4,24 +4,38 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quiz do Conhecimento</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<script src="script.js" defer></script>
 </head>
 
 <body>
 <div class="container">
 
-  <!-- TELA INICIAL -->
+  <!-- ══════════════════════════════ -->
+  <!-- TELA INICIAL                  -->
+  <!-- ══════════════════════════════ -->
   <div id="startScreen">
     <h1>Quiz do Conhecimento</h1>
-    <p class="start-description">Responda 15 perguntas e veja quantas você acerta!<br>Você avança mesmo errando. 😄</p>
+    <p class="start-description">
+      Responda 15 perguntas e veja quantas você acerta!<br>
+      Você avança mesmo errando. 😄
+    </p>
+
+    <!-- Preview das ajudas disponíveis -->
+    <div class="ajudas-preview">
+      <span class="ajuda-chip">🔥 Eliminar 2</span>
+      <span class="ajuda-chip">⏭️ Pular</span>
+      <span class="ajuda-chip">💡 Dica IA</span>
+    </div>
+
     <button class="main-btn" onclick="startGame()">🚀 Começar</button>
   </div>
 
-  <!-- TELA DO JOGO -->
+  <!-- ══════════════════════════════ -->
+  <!-- TELA DO JOGO                  -->
+  <!-- ══════════════════════════════ -->
   <div id="gameScreen" style="display:none">
 
+    <!-- Pontuação -->
     <div id="score">Pontos: 0</div>
 
     <!-- Placar acertos/erros -->
@@ -53,14 +67,48 @@
       </div>
     </div>
 
+    <!-- Pergunta -->
     <h2 id="question"></h2>
+
+    <!-- Respostas -->
     <div id="answers"></div>
+
+    <!-- Caixa da dica (aparece ao usar a ajuda) -->
+    <div id="dicaBox"></div>
+
+    <!-- ── Ajudas ── -->
+    <div class="ajudas-section">
+      <div class="ajudas-label">⚡ Ajudas — 1 uso cada</div>
+      <div class="ajudas-row">
+
+        <button class="ajuda-btn" id="ajuda-eliminar" onclick="usarEliminar()" title="Elimina 2 respostas erradas">
+          <span class="ajuda-icon">🔥</span>
+          <span class="ajuda-nome">Eliminar 2</span>
+        </button>
+
+        <button class="ajuda-btn" id="ajuda-pular" onclick="usarPular()" title="Pula sem contar erro">
+          <span class="ajuda-icon">⏭️</span>
+          <span class="ajuda-nome">Pular</span>
+        </button>
+
+        <button class="ajuda-btn" id="ajuda-dica" onclick="usarDica()" title="Gera uma dica com IA">
+          <span class="ajuda-icon">💡</span>
+          <span class="ajuda-nome">Dica IA</span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Botão próxima -->
     <button id="nextBtn" onclick="nextQuestion()">Próxima ➜</button>
 
   </div>
 
-  <!-- TELA FINAL -->
+  <!-- ══════════════════════════════ -->
+  <!-- TELA FINAL                    -->
+  <!-- ══════════════════════════════ -->
   <div id="endScreen" style="display:none">
+
     <h1 id="finalMessage"></h1>
 
     <div class="result-summary">
@@ -74,15 +122,21 @@
         <span class="r-count" id="finalErros">0</span>
         <span class="r-label">Erros</span>
       </div>
+      <div class="result-card ajudas">
+        <span class="r-icon">🃏</span>
+        <span class="r-count" id="finalAjudas">0</span>
+        <span class="r-label">Ajudas</span>
+      </div>
     </div>
 
     <p id="finalScore"></p>
     <p class="performance-msg" id="performanceMsg"></p>
     <button class="main-btn" onclick="restartGame()">🔄 Jogar novamente</button>
+
   </div>
 
 </div>
 
-
+<script src="script.js"></script>
 </body>
 </html>
