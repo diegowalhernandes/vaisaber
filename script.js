@@ -3,7 +3,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 let perguntasJogo = []
 let perguntaAtual = 0
-let pontos = 0
+let xp = 0
 let acertos = 0
 let erros = 0
 let respondida = false
@@ -15,7 +15,8 @@ const ajudas = {
   dica: true
 }
 
-const premios = [100, 200, 300, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 750000, 1000000]
+// XP por pergunta (cresce progressivamente)
+const xpPorPergunta = [50, 100, 150, 200, 250, 300, 400, 500, 600, 750, 900, 1100, 1300, 1600, 2000]
 
 // ── Fisher-Yates ──
 function shuffle(array) {
@@ -49,11 +50,9 @@ function updateAjudaBtns() {
     const btn = document.getElementById("ajuda-" + key)
     if (!btn) return
     if (ajudas[key]) {
-      // Disponível — garante que está habilitado
       btn.classList.remove("ajuda-usada")
       btn.disabled = false
     } else {
-      // Já usada — desabilita
       btn.classList.add("ajuda-usada")
       btn.disabled = true
     }
@@ -92,12 +91,12 @@ async function startGame() {
     }))
 
     perguntaAtual = 0
-    pontos = 0
+    xp = 0
     acertos = 0
     erros = 0
     respondida = false
 
-    document.getElementById("score").innerText = "Pontos: 0"
+    document.getElementById("score").innerText = "⭐ XP: 0"
     document.getElementById("countAcertos").innerText = "0"
     document.getElementById("countErros").innerText = "0"
 
@@ -121,6 +120,10 @@ function loadQuestion() {
 
   updateProgressBar()
 
+  // Mostra XP disponível nesta pergunta
+  const xpDisponivel = xpPorPergunta[perguntaAtual]
+  document.getElementById("xpPergunta").innerText = "+" + xpDisponivel + " XP"
+
   const answers = document.getElementById("answers")
   answers.innerHTML = ""
 
@@ -128,7 +131,6 @@ function loadQuestion() {
   document.getElementById("dicaBox").style.display = "none"
   document.getElementById("dicaBox").innerText = ""
 
-  // Reativa botões de ajuda que ainda estão disponíveis
   updateAjudaBtns()
 
   const opcosEmbaralhadas = shuffle(q.opcoes)
@@ -145,10 +147,9 @@ function checkAnswer(btn, opcao, resposta) {
   if (respondida) return
   respondida = true
 
-  // Desativa ajudas após responder
   Object.keys(ajudas).forEach(key => {
-    const btn = document.getElementById("ajuda-" + key)
-    if (btn) btn.disabled = true
+    const b = document.getElementById("ajuda-" + key)
+    if (b) b.disabled = true
   })
 
   const buttons = document.querySelectorAll("#answers button")
@@ -160,9 +161,13 @@ function checkAnswer(btn, opcao, resposta) {
     btn.classList.add("correct")
     questionEl.classList.add("correct-q")
     acertos++
-    pontos += premios[perguntaAtual]
-    document.getElementById("score").innerText = "Pontos: " + pontos.toLocaleString("pt-BR")
+    xp += xpPorPergunta[perguntaAtual]
+    document.getElementById("score").innerText = "⭐ XP: " + xp.toLocaleString("pt-BR")
     document.getElementById("countAcertos").innerText = acertos
+
+    // Feedback de XP ganho
+    showXpFeedback("+" + xpPorPergunta[perguntaAtual] + " XP!")
+
     bumpCard("cardAcertos")
   } else {
     btn.classList.add("wrong")
@@ -178,6 +183,15 @@ function checkAnswer(btn, opcao, resposta) {
   const nextBtn = document.getElementById("nextBtn")
   nextBtn.innerText = perguntaAtual >= 14 ? "Ver resultado 🏁" : "Próxima ➜"
   nextBtn.style.display = "block"
+}
+
+// ── Feedback flutuante de XP ──
+function showXpFeedback(texto) {
+  const el = document.createElement("div")
+  el.className = "xp-popup"
+  el.innerText = texto
+  document.querySelector(".container").appendChild(el)
+  setTimeout(() => el.remove(), 1200)
 }
 
 // ── Próxima pergunta ──
@@ -203,7 +217,6 @@ function usarEliminar() {
   const q = perguntasJogo[perguntaAtual]
   const buttons = Array.from(document.querySelectorAll("#answers button"))
 
-  // trim() garante que espaços extras não quebrem a comparação
   const errados = buttons.filter(b => b.innerText.trim() !== q.resposta.trim())
   shuffle(errados).slice(0, 2).forEach(b => {
     b.classList.add("eliminada")
@@ -215,13 +228,11 @@ function usarEliminar() {
 function usarPular() {
   if (!ajudas.pular || respondida) return
   ajudas.pular = false
-  respondida = true // evita resposta após pular
+  respondida = true
 
-  // Feedback visual na pergunta
   const questionEl = document.getElementById("question")
   questionEl.classList.add("pulada-q")
 
-  // Desativa respostas e ajudas
   document.querySelectorAll("#answers button").forEach(b => b.disabled = true)
   Object.keys(ajudas).forEach(key => {
     const btn = document.getElementById("ajuda-" + key)
@@ -230,7 +241,6 @@ function usarPular() {
 
   updateAjudaBtns()
 
-  // Avança após breve pausa
   setTimeout(() => {
     perguntaAtual++
     if (perguntaAtual >= 15) {
@@ -260,6 +270,7 @@ function usarDica() {
   dicaBox.style.display = "block"
   dicaBox.innerText = "💡 " + dica
 }
+
 // ── Tela final ──
 function finishGame() {
   document.getElementById("progressBar").style.width = "100%"
@@ -271,28 +282,29 @@ function finishGame() {
   document.getElementById("finalAcertos").innerText = acertos
   document.getElementById("finalErros").innerText = erros
 
-  // Ajudas não usadas
   const ajudasRestantes = Object.values(ajudas).filter(v => v).length
   document.getElementById("finalAjudas").innerText = ajudasRestantes
 
+  const xpTotal = xpPorPergunta.reduce((a, b) => a + b, 0)
   const pct = Math.round((acertos / 15) * 100)
-  let emoji, msg, performance
+  let emoji, msg, nivel
 
-  if (pct === 100)      { emoji = "🏆"; msg = "Perfeito! Você acertou tudo!";  performance = "Incrível! Aproveitamento de 100%!" }
-  else if (pct >= 80)   { emoji = "🌟"; msg = "Muito bem!";                    performance = `Aproveitamento de ${pct}% — Excelente!` }
-  else if (pct >= 60)   { emoji = "😊"; msg = "Bom resultado!";                performance = `Aproveitamento de ${pct}% — Continue assim!` }
-  else if (pct >= 40)   { emoji = "🤔"; msg = "Pode melhorar!";                performance = `Aproveitamento de ${pct}% — Tente novamente!` }
-  else                  { emoji = "💪"; msg = "Não desanime!";                  performance = `Aproveitamento de ${pct}% — A prática leva à perfeição!` }
+  if (pct === 100)    { emoji = "🏆"; msg = "Perfeito! Você acertou tudo!";  nivel = "Lendário" }
+  else if (pct >= 80) { emoji = "🌟"; msg = "Muito bem!";                    nivel = "Especialista" }
+  else if (pct >= 60) { emoji = "😊"; msg = "Bom resultado!";                nivel = "Avançado" }
+  else if (pct >= 40) { emoji = "🤔"; msg = "Pode melhorar!";                nivel = "Intermediário" }
+  else                { emoji = "💪"; msg = "Não desanime!";                  nivel = "Iniciante" }
 
   document.getElementById("finalMessage").innerText = emoji + " " + msg
-  document.getElementById("finalScore").innerText = "Pontuação: R$ " + pontos.toLocaleString("pt-BR")
-  document.getElementById("performanceMsg").innerText = performance
+  document.getElementById("finalXP").innerText = "⭐ " + xp.toLocaleString("pt-BR") + " XP"
+  document.getElementById("finalNivel").innerText = "Nível: " + nivel
+  document.getElementById("performanceMsg").innerText = `Aproveitamento de ${pct}% — ${xp.toLocaleString("pt-BR")} de ${xpTotal.toLocaleString("pt-BR")} XP possíveis`
 }
 
 // ── Reiniciar ──
 function restartGame() {
   perguntaAtual = 0
-  pontos = 0
+  xp = 0
   acertos = 0
   erros = 0
   document.getElementById("endScreen").style.display = "none"
